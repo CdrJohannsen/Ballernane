@@ -1,5 +1,5 @@
 # Bananagun
- 
-Code for the `G`NU Licenced\n
-             `U`nbelievably secure\n
-             `N`ot Weapon
+***
+Code for the `G`NU Licenced<br>
+             `U`nbelievably secure<br>
+             `N`ot Weapon<br>
