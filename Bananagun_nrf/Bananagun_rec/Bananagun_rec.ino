@@ -6,8 +6,6 @@
 #define SENSOR1 9
 #define SENSOR2 10
 #define SENSOR3 11
-#define SENSOR4 12
-#define SENSOR5 13
 
 uint8_t star[8]  = {0x0, 0x0, 0x15, 0xe, 0x1f, 0xe, 0x15, 0x0};
 
@@ -18,8 +16,6 @@ const byte addresses[][6] = {"00001", "00002"};
 Servo servo1;
 Servo servo2;
 Servo servo3;
-Servo servo4;
-Servo servo5;
 
 int targets_hit = 0;
 int shots = 0;
@@ -44,14 +40,10 @@ void setup() {
   pinMode(SENSOR1, INPUT);
   pinMode(SENSOR2, INPUT);
   pinMode(SENSOR3, INPUT);
-  pinMode(SENSOR4, INPUT);
-  pinMode(SENSOR5, INPUT);
 
   servo1.attach(2);
   servo2.attach(3);
   servo3.attach(4);
-  servo4.attach(5);
-  servo5.attach(6);
   reset();
 }
 
@@ -138,8 +130,6 @@ void reset() {
   servo1.write(0);
   servo2.write(0);
   servo3.write(0);
-  servo4.write(0);
-  servo5.write(0);
   targets_hit = 0;
 }
 void targetRun() {
@@ -154,14 +144,6 @@ void targetRun() {
   }
   if (digitalRead(SENSOR3)) {
     servo3.write(90);
-    targets_hit++;
-  }
-  if (digitalRead(SENSOR4)) {
-    servo4.write(90);
-    targets_hit++;
-  }
-  if (digitalRead(SENSOR5)) {
-    servo5.write(90);
     targets_hit++;
   }
   if(temp_tar > targets_hit){

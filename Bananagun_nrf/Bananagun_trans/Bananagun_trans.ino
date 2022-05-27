@@ -2,9 +2,9 @@
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-#define BUTTON 12
-#define LASER 11
-#define PIN 10
+#define BUTTON 10
+#define LASER 6
+#define TONEPIN 5
 
 RF24 radio(7, 8); // CE, CSN
 
@@ -33,7 +33,7 @@ void loop() {
     delay(100);
     digitalWrite(LASER,LOW);
     for (int i = 2000; i > 31; i--) { //shot
-      tone(PIN, i, 1);
+      tone(TONEPIN, i, 1);
     }
   }
   delay(5);
@@ -57,18 +57,18 @@ void loop() {
   while (!radio.available());
   radio.read(&hit, sizeof(hit));
   if (hit == 1) {
-    tone(PIN, 500, 100);  //success
+    tone(TONEPIN, 500, 100);  //success
     delay(100);
-    tone(PIN, 800, 200);
+    tone(TONEPIN, 800, 200);
     delay(200);
-    noTone(PIN);
+    noTone(TONEPIN);
   }
   else if(hit==0) {
-    tone(PIN, 120, 300);  //failed
+    tone(TONEPIN, 120, 300);  //failed
     delay(370);
-    tone(PIN, 60, 500);
+    tone(TONEPIN, 60, 500);
     delay(500);
-    noTone(PIN);
+    noTone(TONEPIN);
   }
   hit = 2;
 }
