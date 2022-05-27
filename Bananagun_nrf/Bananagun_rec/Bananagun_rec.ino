@@ -62,42 +62,16 @@ void loop() {
   lcd.clear();
   lcd.print("Shots fired:");
   lcd.print(shots);
-  lcd.print("/5");
+  lcd.print("/3");
   lcd.setCursor(0,1);
   lcd.print("Targets hit:");
   lcd.print(targets_hit);
-  lcd.print("/5");
-  if(shots=5){
+  lcd.print("/3");
+  if(shots=3){
     lcd.clear();
-    if (targets_hit = 5) {
+    if (targets_hit = 3) {
       delay(1000);
       lcd.print("Fantastic run!");
-      lcd.setCursor(3,1);
-      lcd.write(0);
-      lcd.print(" ");
-      lcd.write(0);
-      lcd.print(" ");
-      lcd.write(0);
-      lcd.print(" ");
-      lcd.write(0);
-      lcd.print(" ");
-      lcd.write(0);
-    }
-    else if (targets_hit = 4) {
-      delay(1000);
-      lcd.print("Not too Bad!");
-      lcd.setCursor(4,1);
-      lcd.write(0);
-      lcd.print(" ");
-      lcd.write(0);
-      lcd.print(" ");
-      lcd.write(0);
-      lcd.print(" ");
-      lcd.write(0);
-    }
-    else if (targets_hit = 3) {
-      delay(1000);
-      lcd.print("Could be better.");
       lcd.setCursor(5,1);
       lcd.write(0);
       lcd.print(" ");
@@ -107,16 +81,12 @@ void loop() {
     }
     else if (targets_hit = 2) {
       delay(1000);
-      lcd.print("Hit the targets!");
-      lcd.setCursor(6,1);
+      lcd.print("Could be better.");
+      lcd.setCursor(5,1);
       lcd.write(0);
       lcd.print(" ");
       lcd.write(0);
-    }
-    else if (targets_hit = 1) {
-      delay(1000);
-      lcd.print("Quite bad!");
-      lcd.setCursor(7,1);
+      lcd.print(" ");
       lcd.write(0);
     }
     else{

@@ -10,7 +10,7 @@ RF24 radio(7, 8); // CE, CSN
 
 const byte addresses[][6] = {"00001", "00002"};
 int button = 1;
-int tries = 5;
+int tries = 3;
 int hit = 2;
 
 void setup() {
@@ -74,5 +74,5 @@ void loop() {
 }
 
 void reset() {
-  tries = 5;
+  tries = 3;
 }
