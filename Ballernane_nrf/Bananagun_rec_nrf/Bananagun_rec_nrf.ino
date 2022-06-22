@@ -42,6 +42,7 @@ void setup() {
   lcd.backlight();
   lcd.createChar(0, star);
   lcd.home();
+  lcd.clear();
 
   pinMode(SENSOR1, INPUT);
   pinMode(SENSOR2, INPUT);
@@ -54,28 +55,39 @@ void setup() {
 }
 
 void loop() {
+
   if (radio.available()) {
     message = 1;
     radio.read(&message, sizeof(message));
-    if (message = 2) {
+    Serial.print("Radio avaliable: ");
+    Serial.println(message);
+    if (message == 2) {
       reset();
     }
-    else if(message=0){
+    else if(message==0){
       shots++;
+      hit = 1;
     }
   }
+  
   targetRun();
-  lcd.clear();
-  lcd.print("Shots fired:");
-  lcd.print(shots);
-  lcd.print("/3");
-  lcd.setCursor(0,1);
-  lcd.print("Targets hit:");
-  lcd.print(targets_hit);
-  lcd.print("/3");
-  if(shots=3){
+  if (hit != 0){
+    Serial.println("clearing");
     lcd.clear();
-    if (targets_hit = 3) {
+    lcd.print("Shots fired:");
+    lcd.print(shots);
+    lcd.print("/3");
+    lcd.setCursor(0,1);
+    lcd.print("Targets hit:");
+    lcd.print(targets_hit);
+    lcd.print("/3");
+    hit = 0;
+  }
+
+  if(shots==3){
+    Serial.println("shots == 3");
+    lcd.clear();
+    if (targets_hit == 3) {
       delay(1000);
       lcd.print("Fantastic run!");
       lcd.setCursor(5,1);
@@ -85,7 +97,7 @@ void loop() {
       lcd.print(" ");
       lcd.write(0);
     }
-    else if (targets_hit = 2) {
+    else if (targets_hit == 2) {
       delay(1000);
       lcd.print("Could be better.");
       lcd.setCursor(5,1);
@@ -103,10 +115,12 @@ void loop() {
   delay(10);
 }
 void reset() {
+  Serial.println("resetting");
   servo1.write(0);
   servo2.write(0);
   servo3.write(0);
   targets_hit = 0;
+  Serial.println("resetted");
 }
 void targetRun() {
   int temp_tar = targets_hit;
@@ -128,7 +142,7 @@ void targetRun() {
     radio.write(&hit, sizeof(hit));
     radio.startListening();
   }
-  else if(message=0){
+  else if(message==0){
     radio.stopListening();
     hit = 0;
     radio.write(&hit, sizeof(hit));

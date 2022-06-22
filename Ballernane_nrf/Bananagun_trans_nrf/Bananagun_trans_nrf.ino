@@ -15,10 +15,11 @@ RF24 radio(7, 8); // CE, CSN
 
 const byte addresses[][6] = {"00001", "00002"};
 int button = 1;
-int tries = 3;
+int tries = 2;
 int hit = 2;
 
 void setup() {
+  Serial.begin(9600);
   radio.begin();
   radio.openWritingPipe(addresses[1]); // 00002
   radio.openReadingPipe(1, addresses[0]); // 00001
@@ -29,38 +30,58 @@ void setup() {
 }
 
 void loop() {
-  button = digitalRead(BUTTON);
-  if (button = LOW) {
-    digitalWrite(LASER,HIGH);
-    radio.stopListening();
-    radio.write(&button, sizeof(button)); //damit das Ziel auch was machen kann (blinken oder so)
-    radio.startListening();
-    delay(100);
-    digitalWrite(LASER,LOW);
-    for (int i = 2000; i > 31; i--) { //shot
-      tone(TONEPIN, i, 1);
+ 
+  while (true){
+    button = digitalRead(BUTTON);
+    if (button == LOW) {
+      Serial.println("press");
+      delay(500);
+      digitalWrite(LASER,HIGH);
+      radio.stopListening();
+      for(int i=0;i<10;i++){
+        Serial.println("Sending...");
+        radio.write(&button, sizeof(button)); //damit das Ziel auch was machen kann (blinken oder so)
+      }
+      radio.startListening();
+      delay(100);
+      digitalWrite(LASER,LOW);
+      for (int i = 2000; i > 31; i--) { //shot
+        tone(TONEPIN, i, 1);
+      }
+      break;
     }
+    delay(10);
   }
-  delay(5);
-  if (tries = 0) {
+  if (tries == 0) {
+    Serial.println("Shots fired...");
     delay(500);
 
     reset();
-    button = digitalRead(BUTTON);
-    while(button=1){
+    button = 1;
+    while(button==1){
       delay(50);
-       button = digitalRead(BUTTON);
+      button = digitalRead(BUTTON);
     }
     button = 2;
+    delay(500);
+    /*
     radio.stopListening();
+    Serial.println("stopped listening");
     radio.write(&button, sizeof(button));
+    Serial.println("send");
     radio.startListening();
+    Serial.println(button);
+    Serial.println("Send reset request");
+    */
+    Serial.println("Resetted");
   }
   else {
     tries--;
   }
-  while (!radio.available());
-  radio.read(&hit, sizeof(hit));
+  Serial.print("Tries: ");
+  Serial.println(tries);
+  //while (!radio.available());
+  //radio.read(&hit, sizeof(hit));
   if (hit == 1) {
     tone(TONEPIN, 500, 100);  //success
     delay(100);
@@ -79,5 +100,5 @@ void loop() {
 }
 
 void reset() {
-  tries = 3;
+  tries = 2;
 }
