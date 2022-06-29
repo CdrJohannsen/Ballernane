@@ -79,7 +79,6 @@ void loop() {
 
   targetRun();
   if (hit != 0 || message == 0) {
-    Serial.println("clearing");
     lcd.clear();
     lcd.print("Shots fired:");
     lcd.print(shots);
@@ -129,14 +128,13 @@ void loop() {
   }
 }
 void reset() {
-  Serial.println("resetting");
   servo1.write(0);
   servo2.write(0);
   servo3.write(0);
   targets_hit = 0;
   shots = 0;
   hit = 2;
-  Serial.println("resetted");
+  Serial.println("[DEBUG] Reset");
 }
 void targetRun() {
   int temp_tar = targets_hit;
