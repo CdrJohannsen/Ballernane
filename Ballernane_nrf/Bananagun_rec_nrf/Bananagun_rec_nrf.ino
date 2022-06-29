@@ -128,9 +128,9 @@ void loop() {
   }
 }
 void reset() {
-  servo1.write(0);
-  servo2.write(0);
-  servo3.write(0);
+  servo1.write(140);
+  servo2.write(120);
+  servo3.write(140);
   targets_hit = 0;
   shots = 0;
   hit = 2;
@@ -140,9 +140,9 @@ void targetRun() {
   int temp_tar = targets_hit;
   if (SINGLE_TARGET) {
     if (digitalRead(SENSOR1)) {
-      servo1.write(90);
+      servo2.write(50);
       targets_hit++;
-      servo1.write(0);
+      servo2.write(120);
     }
     return;
   }
@@ -150,15 +150,15 @@ void targetRun() {
 
   }
   else if (digitalRead(SENSOR1)) {
-    servo1.write(90);
+    servo1.write(50);
     targets_hit++;
   }
   else if (digitalRead(SENSOR2)) {
-    servo2.write(90);
+    servo2.write(50);
     targets_hit++;
   }
   else if (digitalRead(SENSOR3)) {
-    servo3.write(90);
+    servo3.write(50);
     targets_hit++;
   }
   /*
