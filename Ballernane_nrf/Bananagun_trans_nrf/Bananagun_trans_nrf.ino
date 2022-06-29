@@ -1,9 +1,9 @@
 /*
-Copyright (C) 2022  Cdr_Johannsen
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
-This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>. 
- */
+  Copyright (C) 2022  Cdr_Johannsen
+  This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
+  This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+  You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
+*/
 #include <SPI.h>
 #include <nRF24L01.h>
 #include <RF24.h>
@@ -30,21 +30,19 @@ void setup() {
 }
 
 void loop() {
- 
-  while (true){
+
+  while (true) {
     button = digitalRead(BUTTON);
     if (button == LOW) {
       Serial.println("press");
       delay(500);
-      digitalWrite(LASER,HIGH);
+      digitalWrite(LASER, HIGH);
       radio.stopListening();
-      for(int i=0;i<10;i++){
-        Serial.println("Sending...");
-        radio.write(&button, sizeof(button)); //damit das Ziel auch was machen kann (blinken oder so)
-      }
+      Serial.println("Sending...");
+      radio.write(&button, sizeof(button));
       radio.startListening();
       delay(100);
-      digitalWrite(LASER,LOW);
+      digitalWrite(LASER, LOW);
       for (int i = 2000; i > 31; i--) { //shot
         tone(TONEPIN, i, 1);
       }
@@ -56,15 +54,15 @@ void loop() {
     Serial.println("Shots fired...");
     delay(500);
 
-    reset();
     button = 1;
-    while(button==1){
+    while (button == 1) {
       delay(50);
       button = digitalRead(BUTTON);
     }
-    button = 2;
+    
     delay(500);
-    /*
+    reset();
+    button = 2;
     radio.stopListening();
     Serial.println("stopped listening");
     radio.write(&button, sizeof(button));
@@ -72,7 +70,7 @@ void loop() {
     radio.startListening();
     Serial.println(button);
     Serial.println("Send reset request");
-    */
+
     Serial.println("Resetted");
   }
   else {
@@ -80,25 +78,42 @@ void loop() {
   }
   Serial.print("Tries: ");
   Serial.println(tries);
-  //while (!radio.available());
-  //radio.read(&hit, sizeof(hit));
-  if (hit == 1) {
+  /*
+    radio.startListening();
+    delay(10);
+    Serial.println(radio.available());
+    while (!radio.available()){
+    Serial.println("Waiting for answer");
+    }
+    Serial.println(radio.available());
+    radio.read(&hit, sizeof(hit));
+    radio.stopListening();
+    if (hit == 1) {
     tone(TONEPIN, 500, 100);  //success
     delay(100);
     tone(TONEPIN, 800, 200);
     delay(200);
     noTone(TONEPIN);
-  }
-  else if(hit==0) {
+    }
+    else if(hit==0) {
+    Serial.println("Failed shot");
     tone(TONEPIN, 120, 300);  //failed
     delay(370);
     tone(TONEPIN, 60, 500);
     delay(500);
     noTone(TONEPIN);
-  }
+    }
+  */
   hit = 2;
 }
 
 void reset() {
   tries = 2;
+  for (int t = 32; t < 250; t++) {
+    tone(TONEPIN, t);  //success
+    delay(5);
+  }
+  tone(TONEPIN, 250, 200);
+  delay(200);
+  noTone(TONEPIN);
 }
