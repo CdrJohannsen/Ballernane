@@ -59,7 +59,7 @@ void loop() {
       delay(50);
       button = digitalRead(BUTTON);
     }
-    
+
     delay(500);
     reset();
     button = 2;
