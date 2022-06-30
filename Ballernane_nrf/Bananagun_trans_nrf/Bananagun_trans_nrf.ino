@@ -29,6 +29,13 @@ void setup() {
   reset();
 }
 
+void send_message(int send_message, char serial_send_message = "Sending...") {
+  radio.stopListening();
+  Serial.println(serial_send_message);
+  radio.write(&send_message, sizeof(send_message));
+  radio.startListening();
+}
+
 void loop() {
   while (true) {
 
@@ -38,10 +45,7 @@ void loop() {
         Serial.println("press");
         delay(500);
         digitalWrite(LASER, HIGH);
-        radio.stopListening();
-        Serial.println("Sending...");
-        radio.write(&button, sizeof(button));
-        radio.startListening();
+        send_message(button);
         delay(100);
         digitalWrite(LASER, LOW);
         for (int i = 2000; i > 31; i--) { //shot
@@ -64,11 +68,7 @@ void loop() {
       delay(500);
       reset();
       button = 2;
-      radio.stopListening();
-      Serial.println("stopped listening");
-      radio.write(&button, sizeof(button));
-      Serial.println("send");
-      radio.startListening();
+      send_message(button);
       Serial.println(button);
       Serial.println("Send reset request");
 
@@ -84,8 +84,13 @@ void loop() {
     radio.startListening();
     delay(10);
     Serial.println(radio.available());
+    long temp_time = millis();
     while (!radio.available()) {
       Serial.println("Waiting for answer");
+      if (temp_time + 1000 < millis()) {
+        Serial.println("No answer");
+        break;
+      }
     }
     Serial.println(radio.available());
     radio.read(&hit, sizeof(hit));
@@ -111,10 +116,10 @@ void loop() {
 }
 
 void reset() {
-  Serial.println("Reset");
+  Serial.println("[DEBUG] Reset");
   tries = 2;
   for (int t = 32; t < 250; t++) {
-    tone(TONEPIN, t);  //success
+    tone(TONEPIN, t);
     delay(5);
   }
   tone(TONEPIN, 250, 200);

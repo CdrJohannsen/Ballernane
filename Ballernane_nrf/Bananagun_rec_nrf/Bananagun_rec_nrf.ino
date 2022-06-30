@@ -4,6 +4,12 @@
   This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
   You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
+/*
+   message == 0: Banana informed it had shot
+   message == 1: Dafault value for message
+   message == 2: Banana requests to reset
+   message == 3: (upcoming) Banana will shoot soon
+*/
 #include <Servo.h>
 #include <SPI.h>
 #include <LiquidCrystal_I2C.h>
@@ -34,7 +40,9 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
   Serial.begin(9600);
-  radio.begin();
+  if (!radio.begin()) {
+    Serial.println("[DEBUG] Can't start radio!");
+  }
   radio.openWritingPipe(addresses[0]); // 00001
   radio.openReadingPipe(1, addresses[1]); // 00002
   radio.setPALevel(RF24_PA_MIN);
@@ -62,8 +70,16 @@ void setup() {
   delay(2000);
 }
 
+void send_message(int message, char serial_message = "Sending...") {
+  radio.stopListening();
+  Serial.println(serial_message);
+  radio.write(&message, sizeof(message));
+  radio.startListening();
+}
+
 void loop() {
   message = 1;
+  digitalWrite(53, LOW);
   if (radio.available() == true) {
     radio.read(&message, sizeof(message));
     Serial.print("Radio avaliable: ");
@@ -166,21 +182,16 @@ void targetRun() {
     targets_hit++;
   }
 
-  if (temp_tar < targets_hit) {
+  if (temp_tar < targets_hit && message == 0) {
     delay(200);
-    radio.stopListening();
     hit = 1;
-    radio.write(&hit, sizeof(hit));
-    radio.startListening();
+    send_message(hit, "[DEBUG] Target hit");
   }
 
   else if (message == 0) {
     delay(300);
-    radio.stopListening();
     hit = 0;
-    radio.write(&hit, sizeof(hit));
-    radio.startListening();
-    Serial.println("feedback");
+    send_message(hit, "[DEBUG] Target missed");
   }
 
 }
