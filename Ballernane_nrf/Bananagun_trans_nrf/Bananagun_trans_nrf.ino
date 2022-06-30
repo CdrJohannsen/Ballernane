@@ -8,6 +8,7 @@
 #include <nRF24L01.h>
 #include <RF24.h>
 #define BUTTON 10
+#define AIM_BUTTON 9
 #define LASER 6
 #define TONEPIN 5
 
@@ -69,12 +70,6 @@ void loop() {
 
       delay(500);
       reset();
-      button = 2;
-      send_message(button);
-      Serial.println(button);
-      Serial.println("Send reset request");
-
-      Serial.println("Resetted");
       continue;
     }
     else {
@@ -82,37 +77,37 @@ void loop() {
     }
     Serial.print("Tries: ");
     Serial.println(tries);
-
-    radio.startListening();
-    delay(10);
-    Serial.println(radio.available());
-    long temp_time = millis();
-    while (!radio.available()) {
+    /*
+      radio.startListening();
+      delay(10);
+      Serial.println(radio.available());
+      long temp_time = millis();
+      while (!radio.available()) {
       Serial.println("Waiting for answer");
       if (temp_time + 1000 < millis()) {
         Serial.println("No answer");
         break;
       }
-    }
-    Serial.println(radio.available());
-    radio.read(&hit, sizeof(hit));
-    radio.stopListening();
-    if (hit == 1) {
+      }
+      Serial.println(radio.available());
+      radio.read(&hit, sizeof(hit));
+      radio.stopListening();
+      if (hit == 1) {
       tone(TONEPIN, 500, 100);  //success
       delay(100);
       tone(TONEPIN, 800, 200);
       delay(200);
       noTone(TONEPIN);
-    }
-    else if (hit == 0) {
+      }
+      else if (hit == 0) {
       Serial.println("Failed shot");
       tone(TONEPIN, 120, 300);  //failed
       delay(370);
       tone(TONEPIN, 60, 500);
       delay(500);
       noTone(TONEPIN);
-    }
-
+      }
+    */
     hit = 2;
   }
 }
@@ -127,4 +122,5 @@ void reset() {
   tone(TONEPIN, 250, 200);
   delay(200);
   noTone(TONEPIN);
+  send_message(2,"[DEBUG] Send request to reset");
 }

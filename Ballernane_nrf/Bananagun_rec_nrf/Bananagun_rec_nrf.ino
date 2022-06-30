@@ -181,17 +181,17 @@ void targetRun() {
     servo3.write(30);
     targets_hit++;
   }
-
-  if (temp_tar < targets_hit && message == 0) {
+  /*
+    if (temp_tar < targets_hit && message == 0) {
     delay(200);
     hit = 1;
     send_message(hit, "[DEBUG] Target hit");
-  }
+    }
 
-  else if (message == 0) {
+    else if (message == 0) {
     delay(300);
     hit = 0;
     send_message(hit, "[DEBUG] Target missed");
-  }
-
+    }
+  */
 }
