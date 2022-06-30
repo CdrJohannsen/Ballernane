@@ -9,9 +9,9 @@
 #include <LiquidCrystal_I2C.h>
 #include <nRF24L01.h>
 #include <RF24.h>
-#define SENSOR1 9
-#define SENSOR2 10
-#define SENSOR3 11
+#define SENSOR1 A1
+#define SENSOR2 A2
+#define SENSOR3 A3
 #define SINGLE_TARGET false
 #define SERVO_UP 140
 #define SERVO_DOWN 50
