@@ -18,6 +18,7 @@ const byte addresses[][6] = {"00001", "00002"};
 int button = 1;
 int tries = 2;
 int hit = 2;
+bool aim_button;
 
 void setup() {
   Serial.begin(9600);
@@ -28,92 +29,97 @@ void setup() {
   radio.openReadingPipe(1, addresses[0]); // 00001
   radio.setPALevel(RF24_PA_MIN);
   pinMode(BUTTON, INPUT_PULLUP);
+  pinMode(AIM_BUTTON, INPUT_PULLUP);
   pinMode(LASER, OUTPUT);
   reset();
 }
 
-void send_message(int send_message, String serial_send_message = "Sending...") {
-  radio.stopListening();
+void send_message(int send_message, String serial_send_message = "[DEBUG] Sending...") {
   Serial.println(serial_send_message);
   radio.write(&send_message, sizeof(send_message));
-  radio.startListening();
 }
 
 void loop() {
+
   while (true) {
-
-    while (true) {
-      button = digitalRead(BUTTON);
-      if (button == LOW) {
-        Serial.println("press");
-        delay(500);
-        digitalWrite(LASER, HIGH);
-        send_message(button);
-        delay(100);
-        digitalWrite(LASER, LOW);
-        for (int i = 2000; i > 31; i--) { //shot
-          tone(TONEPIN, i, 1);
-        }
-        break;
-      }
-      delay(10);
+    button = digitalRead(BUTTON);
+    aim_button = digitalRead(AIM_BUTTON);
+    if (aim_button == LOW) {
+      digitalWrite(LASER, HIGH);
+    } else {
+      digitalWrite(LASER, LOW);
     }
-    if (tries == 0) {
-      Serial.println("Shots fired...");
-      delay(500);
-
-      button = 1;
-      while (button == 1) {
-        delay(50);
-        button = digitalRead(BUTTON);
-      }
-
-      delay(500);
-      reset();
-      continue;
-    }
-    else {
-      tries--;
-    }
-    Serial.print("Tries: ");
-    Serial.println(tries);
-    /*
-      radio.startListening();
-      delay(10);
-      Serial.println(radio.available());
-      long temp_time = millis();
-      while (!radio.available()) {
-      Serial.println("Waiting for answer");
-      if (temp_time + 1000 < millis()) {
-        Serial.println("No answer");
-        break;
-      }
-      }
-      Serial.println(radio.available());
-      radio.read(&hit, sizeof(hit));
-      radio.stopListening();
-      if (hit == 1) {
-      tone(TONEPIN, 500, 100);  //success
-      delay(100);
-      tone(TONEPIN, 800, 200);
+    if (button == LOW) {
+      while(!digitalRead(BUTTON));
+      send_message(3, "[DEBUG] Shooting");
+      digitalWrite(LASER, HIGH);
       delay(200);
-      noTone(TONEPIN);
+      for (int i = 2000; i > 31; i--) { //shot
+        tone(TONEPIN, i, 1);
       }
-      else if (hit == 0) {
-      Serial.println("Failed shot");
-      tone(TONEPIN, 120, 300);  //failed
-      delay(370);
-      tone(TONEPIN, 60, 500);
-      delay(500);
-      noTone(TONEPIN);
-      }
-    */
-    hit = 2;
+      send_message(button, "[DEBUG] Shot");
+      digitalWrite(LASER, LOW);
+      break;
+    }
+    delay(10);
   }
+  if (tries == 0) {
+    Serial.println("Shots fired...");
+    delay(500);
+
+    button = 1;
+    while (button == 1) {
+      delay(50);
+      button = digitalRead(BUTTON);
+    }
+    while(!digitalRead(BUTTON));
+    delay(500);
+    reset();
+    return;
+  }
+  else {
+    tries--;
+  }
+  Serial.print("Tries: ");
+  Serial.println(tries);
+  /*
+    radio.startListening();
+    delay(10);
+    Serial.println(radio.available());
+    long temp_time = millis();
+    while (!radio.available()) {
+    Serial.println("Waiting for answer");
+    if (temp_time + 1000 < millis()) {
+      Serial.println("No answer");
+      break;
+    }
+    }
+    Serial.println(radio.available());
+    radio.read(&hit, sizeof(hit));
+    radio.stopListening();
+    if (hit == 1) {
+    tone(TONEPIN, 500, 100);  //success
+    delay(100);
+    tone(TONEPIN, 800, 200);
+    delay(200);
+    noTone(TONEPIN);
+    }
+    else if (hit == 0) {
+    Serial.println("Failed shot");
+    tone(TONEPIN, 120, 300);  //failed
+    delay(370);
+    tone(TONEPIN, 60, 500);
+    delay(500);
+    noTone(TONEPIN);
+    }
+  */
+  hit = 2;
+
 }
 
 void reset() {
   Serial.println("[DEBUG] Reset");
+  radio.stopListening();
   tries = 2;
   for (int t = 32; t < 250; t++) {
     tone(TONEPIN, t);
@@ -122,5 +128,5 @@ void reset() {
   tone(TONEPIN, 250, 200);
   delay(200);
   noTone(TONEPIN);
-  send_message(2,"[DEBUG] Send request to reset");
+  send_message(2, "[DEBUG] Send request to reset");
 }

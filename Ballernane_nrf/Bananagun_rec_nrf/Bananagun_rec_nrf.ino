@@ -8,7 +8,7 @@
    message == 0: Banana informed it had shot
    message == 1: Dafault value for message
    message == 2: Banana requests to reset
-   message == 3: (upcoming) Banana will shoot soon
+   message == 3: (upcoming) Banana will shoot
 */
 #include <Servo.h>
 #include <SPI.h>
@@ -81,10 +81,26 @@ void loop() {
   message = 1;
   digitalWrite(53, LOW);
   if (radio.available() == true) {
+    long temp_time = millis();
     radio.read(&message, sizeof(message));
-    Serial.print("Radio avaliable: ");
-    Serial.println(message);
-    if (message == 2) {
+    if (message == 3) {
+      Serial.println("[DEBUG] Got warning");
+      shots++;
+      hit = 1;
+      while (temp_time + 600 >= millis()) {
+        if (radio.available()) {
+          radio.read(&message, sizeof(message));
+          if (message == 0) {
+            Serial.println("[DEBUG] Shot");
+            break;
+          }
+        }
+        else if (targetRun()) {
+          break;
+        }
+      }
+    }
+    else if (message == 2) {
       reset();
     }
     else if (message == 0) {
@@ -94,7 +110,6 @@ void loop() {
     }
   }
 
-  targetRun();
   if (hit != 0 || message == 0) {
     lcd.clear();
     lcd.print("Shots fired:");
@@ -156,7 +171,7 @@ void reset() {
   hit = 2;
   Serial.println("[DEBUG] Reset");
 }
-void targetRun() {
+bool targetRun() {
   int temp_tar = targets_hit;
   if (SINGLE_TARGET) {
     if (digitalRead(SENSOR1)) {
@@ -167,20 +182,24 @@ void targetRun() {
     return;
   }
   if (true) {// ----------------------------NUR ZUM TESTEN!!!
-
+    return false;
   }
-  else if (digitalRead(SENSOR1)) {
+  else if (analogRead(SENSOR1) > 500) {
     servo1.write(40);
     targets_hit++;
+    return true;
   }
-  else if (digitalRead(SENSOR2)) {
+  else if (analogRead(SENSOR2) > 500) {
     servo2.write(40);
     targets_hit++;
+    return true;
   }
-  else if (digitalRead(SENSOR3)) {
+  else if (analogRead(SENSOR3) > 500) {
     servo3.write(30);
     targets_hit++;
+    return true;
   }
+  return false;
   /*
     if (temp_tar < targets_hit && message == 0) {
     delay(200);
