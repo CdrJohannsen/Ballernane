@@ -13,8 +13,7 @@
 #define SENSOR2 A2
 #define SENSOR3 A3
 #define SINGLE_TARGET false
-#define SERVO_UP 140
-#define SERVO_DOWN 50
+
 
 uint8_t star[8]  = {0x0, 0x0, 0x15, 0xe, 0x1f, 0xe, 0x15, 0x0};
 
@@ -133,9 +132,9 @@ void loop() {
   }
 }
 void reset() {
-  servo1.write(SERVO_IP);
-  servo2.write(120);
-  servo3.write(SERVO_UP);
+  servo1.write(100);
+  servo2.write(135);
+  servo3.write(90);
   targets_hit = 0;
   shots = 0;
   hit = 2;
@@ -145,9 +144,9 @@ void targetRun() {
   int temp_tar = targets_hit;
   if (SINGLE_TARGET) {
     if (digitalRead(SENSOR1)) {
-      servo2.write(SERVO_DOWN);
+      servo2.write(40);
       targets_hit++;
-      servo2.write(120);
+      servo2.write(135);
     }
     return;
   }
@@ -155,30 +154,33 @@ void targetRun() {
 
   }
   else if (digitalRead(SENSOR1)) {
-    servo1.write(SERVO_DOWN);
+    servo1.write(40);
     targets_hit++;
   }
   else if (digitalRead(SENSOR2)) {
-    servo2.write(SERVO_DOWN);
+    servo2.write(40);
     targets_hit++;
   }
   else if (digitalRead(SENSOR3)) {
-    servo3.write(SERVO_DOWN);
+    servo3.write(30);
     targets_hit++;
   }
-  /*
-    if (temp_tar < targets_hit) {
+
+  if (temp_tar < targets_hit) {
+    delay(200);
     radio.stopListening();
     hit = 1;
     radio.write(&hit, sizeof(hit));
     radio.startListening();
-    }
+  }
 
-    else if(message==0){
+  else if (message == 0) {
+    delay(300);
     radio.stopListening();
     hit = 0;
     radio.write(&hit, sizeof(hit));
     radio.startListening();
-    }
-  */
+    Serial.println("feedback");
+  }
+
 }
