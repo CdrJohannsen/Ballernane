@@ -13,6 +13,8 @@
 #define SENSOR2 10
 #define SENSOR3 11
 #define SINGLE_TARGET false
+#define SERVO_UP 140
+#define SERVO_DOWN 50
 
 uint8_t star[8]  = {0x0, 0x0, 0x15, 0xe, 0x1f, 0xe, 0x15, 0x0};
 
@@ -105,11 +107,14 @@ void loop() {
     }
     else if (targets_hit == 2) {
       lcd.print("Could be better.");
-      lcd.setCursor(5, 1);
+      lcd.setCursor(6, 1);
       lcd.write(0);
       lcd.print(" ");
       lcd.write(0);
-      lcd.print(" ");
+    }
+    else if (targets_hit == 1) {
+      lcd.print("At least one.");
+      lcd.setCursor(7, 1);
       lcd.write(0);
     }
     else {
@@ -128,9 +133,9 @@ void loop() {
   }
 }
 void reset() {
-  servo1.write(140);
+  servo1.write(SERVO_IP);
   servo2.write(120);
-  servo3.write(140);
+  servo3.write(SERVO_UP);
   targets_hit = 0;
   shots = 0;
   hit = 2;
@@ -140,7 +145,7 @@ void targetRun() {
   int temp_tar = targets_hit;
   if (SINGLE_TARGET) {
     if (digitalRead(SENSOR1)) {
-      servo2.write(50);
+      servo2.write(SERVO_DOWN);
       targets_hit++;
       servo2.write(120);
     }
@@ -150,15 +155,15 @@ void targetRun() {
 
   }
   else if (digitalRead(SENSOR1)) {
-    servo1.write(50);
+    servo1.write(SERVO_DOWN);
     targets_hit++;
   }
   else if (digitalRead(SENSOR2)) {
-    servo2.write(50);
+    servo2.write(SERVO_DOWN);
     targets_hit++;
   }
   else if (digitalRead(SENSOR3)) {
-    servo3.write(50);
+    servo3.write(SERVO_DOWN);
     targets_hit++;
   }
   /*
