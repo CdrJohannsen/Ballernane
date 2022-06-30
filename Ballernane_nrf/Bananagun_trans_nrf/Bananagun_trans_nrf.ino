@@ -20,7 +20,9 @@ int hit = 2;
 
 void setup() {
   Serial.begin(9600);
-  radio.begin();
+  if (!radio.begin()) {
+    Serial.println("[DEBUG] Radio hardware is not responding!");
+  }
   radio.openWritingPipe(addresses[1]); // 00002
   radio.openReadingPipe(1, addresses[0]); // 00001
   radio.setPALevel(RF24_PA_MIN);
@@ -29,7 +31,7 @@ void setup() {
   reset();
 }
 
-void send_message(int send_message, char serial_send_message = "Sending...") {
+void send_message(int send_message, String serial_send_message = "Sending...") {
   radio.stopListening();
   Serial.println(serial_send_message);
   radio.write(&send_message, sizeof(send_message));

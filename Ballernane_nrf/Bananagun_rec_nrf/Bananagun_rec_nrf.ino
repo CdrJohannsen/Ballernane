@@ -41,7 +41,7 @@ LiquidCrystal_I2C lcd(0x27, 16, 2);
 void setup() {
   Serial.begin(9600);
   if (!radio.begin()) {
-    Serial.println("[DEBUG] Can't start radio!");
+    Serial.println("[DEBUG] Radio hardware is not responding!");
   }
   radio.openWritingPipe(addresses[0]); // 00001
   radio.openReadingPipe(1, addresses[1]); // 00002
@@ -70,7 +70,7 @@ void setup() {
   delay(2000);
 }
 
-void send_message(int message, char serial_message = "Sending...") {
+void send_message(int message, String serial_message = "Sending...") {
   radio.stopListening();
   Serial.println(serial_message);
   radio.write(&message, sizeof(message));
