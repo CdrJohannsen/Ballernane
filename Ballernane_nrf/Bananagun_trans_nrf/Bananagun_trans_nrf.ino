@@ -19,6 +19,7 @@ int button = 1;
 int tries = 2;
 int hit = 2;
 bool aim_button;
+bool aiming = false;
 
 void setup() {
   Serial.begin(9600);
@@ -44,14 +45,15 @@ void loop() {
   while (true) {
     button = digitalRead(BUTTON);
     aim_button = digitalRead(AIM_BUTTON);
-    if (aim_button == LOW) {
+    if (aim_button == LOW && !aiming) {
+      aiming = true;
+      send_message(3, "[DEBUG] Aiming");
+      delay(500);
       digitalWrite(LASER, HIGH);
-    } else {
-      digitalWrite(LASER, LOW);
     }
     if (button == LOW) {
-      while(!digitalRead(BUTTON));
-      send_message(3, "[DEBUG] Shooting");
+      aiming = false;
+      while (!digitalRead(BUTTON));
       digitalWrite(LASER, HIGH);
       delay(200);
       for (int i = 2000; i > 31; i--) { //shot
@@ -72,7 +74,7 @@ void loop() {
       delay(50);
       button = digitalRead(BUTTON);
     }
-    while(!digitalRead(BUTTON));
+    while (!digitalRead(BUTTON));
     delay(500);
     reset();
     return;

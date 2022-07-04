@@ -36,6 +36,10 @@ int shots = 0;
 int hit = 2;
 int message = 1;
 
+long sensor1;
+long sensor2;
+long sensor3;
+
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 void setup() {
@@ -84,6 +88,9 @@ void loop() {
     long temp_time = millis();
     radio.read(&message, sizeof(message));
     if (message == 3) {
+      sensor1 = analogRead(SENSOR1);
+      sensor2 = analogRead(SENSOR2);
+      sensor3 = analogRead(SENSOR3);
       Serial.println("[DEBUG] Got warning");
       shots++;
       hit = 1;
@@ -184,17 +191,17 @@ bool targetRun() {
   if (true) {// ----------------------------NUR ZUM TESTEN!!!
     return false;
   }
-  else if (analogRead(SENSOR1) > 500) {
+  else if (analogRead(SENSOR1) > sensor1 + 500) {
     servo1.write(40);
     targets_hit++;
     return true;
   }
-  else if (analogRead(SENSOR2) > 500) {
+  else if (analogRead(SENSOR2) > sensor2 + 500) {
     servo2.write(40);
     targets_hit++;
     return true;
   }
-  else if (analogRead(SENSOR3) > 500) {
+  else if (analogRead(SENSOR3) > sensor3 + 500) {
     servo3.write(30);
     targets_hit++;
     return true;
