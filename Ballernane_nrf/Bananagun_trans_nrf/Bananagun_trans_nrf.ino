@@ -66,9 +66,9 @@ void loop() {
     delay(10);
   }
   */
-  while (digitalRead(BUTTON)){
+  while (!digitalRead(BUTTON)){
     digitalWrite(LASER, HIGH);
-    while (!digitalRead(BUTTON)){}
+    while (digitalRead(BUTTON)){}
     digitalWrite(LASER, LOW);
     send_message(1);
     delay(100);
