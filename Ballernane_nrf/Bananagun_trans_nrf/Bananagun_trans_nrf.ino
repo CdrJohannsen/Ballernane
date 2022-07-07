@@ -41,7 +41,7 @@ void send_message(int send_message, String serial_send_message = "[DEBUG] Sendin
 }
 
 void loop() {
-
+/*
   while (true) {
     button = digitalRead(BUTTON);
     aim_button = digitalRead(AIM_BUTTON);
@@ -64,6 +64,17 @@ void loop() {
       break;
     }
     delay(10);
+  }
+  */
+  while (digitalRead(BUTTON)){
+    digitalWrite(LASER, HIGH);
+    while (!digitalRead(BUTTON)){}
+    digitalWrite(LASER, LOW);
+    send_message(1);
+    delay(100);
+    digitalWrite(LASER, HIGH);
+    delay(100);
+    digitalWrite(LASER, LOW);
   }
   if (tries == 0) {
     Serial.println("Shots fired...");

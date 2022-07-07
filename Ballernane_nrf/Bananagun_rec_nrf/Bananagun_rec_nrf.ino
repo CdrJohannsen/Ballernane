@@ -81,13 +81,76 @@ void send_message(int message, String serial_message = "Sending...") {
   radio.startListening();
 }
 
+void reset() {
+  servo1.write(100);
+  servo2.write(135);
+  servo3.write(90);
+  targets_hit = 0;
+  shots = 0;
+  hit = 2;
+  Serial.println("[DEBUG] Reset");
+}
+
+bool targetRun() {
+  int temp_tar = targets_hit;
+  if (SINGLE_TARGET) {
+    if (digitalRead(SENSOR1)) {
+      servo2.write(40);
+      targets_hit++;
+      servo2.write(135);
+    }
+    return;
+  }
+  if (true) {// ----------------------------NUR ZUM TESTEN!!!
+    return false;
+  }
+  else if (analogRead(SENSOR1) > sensor1 + 500) {
+    servo1.write(40);
+    targets_hit++;
+    return true;
+  }
+  else if (analogRead(SENSOR2) > sensor2 + 500) {
+    servo2.write(40);
+    targets_hit++;
+    return true;
+  }
+  else if (analogRead(SENSOR3) > sensor3 + 500) {
+    servo3.write(30);
+    targets_hit++;
+    return true;
+  }
+  return false;
+  /*
+    if (temp_tar < targets_hit && message == 0) {
+    delay(200);
+    hit = 1;
+    send_message(hit, "[DEBUG] Target hit");
+    }
+
+    else if (message == 0) {
+    delay(300);
+    hit = 0;
+    send_message(hit, "[DEBUG] Target missed");
+    }
+  */
+}
+
 void loop() {
   message = 1;
   digitalWrite(53, LOW);
   if (radio.available() == true) {
     long temp_time = millis();
     radio.read(&message, sizeof(message));
-    if (message == 3) {
+    if (message == 1) {
+      sensor1 = analogRead(SENSOR1);
+      sensor2 = analogRead(SENSOR2);
+      sensor3 = analogRead(SENSOR3);
+      delay(100);
+      targetRun();
+    }
+
+    /*
+      if (message == 3) {
       sensor1 = analogRead(SENSOR1);
       sensor2 = analogRead(SENSOR2);
       sensor3 = analogRead(SENSOR3);
@@ -106,16 +169,17 @@ void loop() {
           break;
         }
       }
-    }
-    else if (message == 2) {
-      reset();
-    }
-    else if (message == 0) {
-      shots++;
-      hit = 1;
-      Serial.println("Shot");
-    }
+    */
   }
+  else if (message == 2) {
+    reset();
+  }
+  else if (message == 0) {
+    shots++;
+    hit = 1;
+    Serial.println("Shot");
+  }
+
 
   if (hit != 0 || message == 0) {
     lcd.clear();
@@ -168,56 +232,4 @@ void loop() {
       }
     }
   }
-}
-void reset() {
-  servo1.write(100);
-  servo2.write(135);
-  servo3.write(90);
-  targets_hit = 0;
-  shots = 0;
-  hit = 2;
-  Serial.println("[DEBUG] Reset");
-}
-bool targetRun() {
-  int temp_tar = targets_hit;
-  if (SINGLE_TARGET) {
-    if (digitalRead(SENSOR1)) {
-      servo2.write(40);
-      targets_hit++;
-      servo2.write(135);
-    }
-    return;
-  }
-  if (true) {// ----------------------------NUR ZUM TESTEN!!!
-    return false;
-  }
-  else if (analogRead(SENSOR1) > sensor1 + 500) {
-    servo1.write(40);
-    targets_hit++;
-    return true;
-  }
-  else if (analogRead(SENSOR2) > sensor2 + 500) {
-    servo2.write(40);
-    targets_hit++;
-    return true;
-  }
-  else if (analogRead(SENSOR3) > sensor3 + 500) {
-    servo3.write(30);
-    targets_hit++;
-    return true;
-  }
-  return false;
-  /*
-    if (temp_tar < targets_hit && message == 0) {
-    delay(200);
-    hit = 1;
-    send_message(hit, "[DEBUG] Target hit");
-    }
-
-    else if (message == 0) {
-    delay(300);
-    hit = 0;
-    send_message(hit, "[DEBUG] Target missed");
-    }
-  */
 }
