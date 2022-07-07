@@ -67,6 +67,10 @@ void loop() {
     }
   */
   while (digitalRead(BUTTON)) {}
+  delay(50);
+  if (digitalRead(BUTTON)){
+    return;
+  }
   digitalWrite(LASER, HIGH);
 
   while (digitalRead(BUTTON)) {}
