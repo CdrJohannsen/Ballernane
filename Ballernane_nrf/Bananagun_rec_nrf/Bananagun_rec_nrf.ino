@@ -5,10 +5,10 @@
   You should have received a copy of the GNU General Public License along with this program; if not, see <http://www.gnu.org/licenses/>.
 */
 /*
-   message == 0: Banana informed it had shot
-   message == 1: Dafault value for message
-   message == 2: Banana requests to reset
-   message == 3: (upcoming) Banana will shoot
+    message == 0: Banana informed it had shot
+    message == 1: Dafault value for message
+    message == 2: Banana requests to reset
+    message == 3: (upcoming) Banana will shoot
 */
 #include <Servo.h>
 #include <SPI.h>
