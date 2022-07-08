@@ -21,6 +21,14 @@
 #define SENSOR3 A3
 #define SINGLE_TARGET false
 
+#define SERVO1_DOWN 50
+#define SERVO2_DOWN 40
+#define SERVO3_DOWN 50
+
+#define SERVO1_UP 120
+#define SERVO2_UP 120
+#define SERVO3_UP 120
+
 
 uint8_t star[8]  = {0x0, 0x0, 0x15, 0xe, 0x1f, 0xe, 0x15, 0x0};
 
@@ -37,9 +45,13 @@ int shots = 0;
 int hit = 2;
 int message = 1;
 
-long sensor1;
-long sensor2;
-long sensor3;
+float sensor1;
+float sensor2;
+float sensor3;
+
+float norm_sensor1;
+float norm_sensor2;
+float norm_sensor3;
 
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
@@ -83,13 +95,13 @@ void send_message(int message, String serial_message = "Sending...") {
 }
 
 void reset() {
-  servo1.write(50);
-  servo2.write(50);
-  servo3.write(50);
+  servo1.write(SERVO1_DOWN);
+  servo2.write(SERVO2_DOWN);
+  servo3.write(SERVO3_DOWN);
   delay(100);
-  servo1.write(120);
-  servo2.write(120);
-  servo3.write(120);
+  servo1.write(SERVO1_UP);
+  servo2.write(SERVO2_UP);
+  servo3.write(SERVO3_UP);
   targets_hit = 0;
   shots = 0;
   hit = 2;
@@ -97,22 +109,26 @@ void reset() {
 }
 
 bool targetRun() {
-  Serial.print(analogRead(SENSOR1));
+  sensor1 = analogRead(SENSOR1);
+  sensor2 = analogRead(SENSOR2);
+  sensor3 = analogRead(SENSOR3);
+  Serial.println("TARGET VALUES");
+  Serial.print(sensor1);
   Serial.print(" : ");
-  Serial.print(analogRead(SENSOR2));
+  Serial.print(sensor2);
   Serial.print(" : ");
-  Serial.println(analogRead(SENSOR3));
+  Serial.println(sensor3);
   int temp_tar = targets_hit;
   if (SINGLE_TARGET) {
-    if (analogRead(SENSOR1) > sensor1*1.4) {
-      servo2.write(40);
+    if (sensor1 > norm_sensor1*2) {
+      servo2.write(SERVO2_DOWN);
       targets_hit++;
-      servo2.write(135);
+      servo2.write(SERVO2_UP);
     }
     return;
   }
-  if (analogRead(SENSOR1) > sensor1*1.5) {
-    servo1.write(50);
+  if (sensor1 > norm_sensor1*2) {
+    servo1.write(SERVO1_DOWN);
     targets_hit++;
     Serial.println("Hit");
     Serial.print(analogRead(SENSOR1));
@@ -120,13 +136,13 @@ bool targetRun() {
     Serial.print(sensor1);
     return true;
   }
-  else if (analogRead(SENSOR2) > sensor2*1.5) {
-    servo2.write(50);
+  else if (sensor2 > norm_sensor2*2) {
+    servo2.write(SERVO2_DOWN);
     targets_hit++;
     return true;
   }
-  else if (analogRead(SENSOR3) > sensor3*1.5) {
-    servo3.write(50);
+  else if (sensor3 > norm_sensor3*2) {
+    servo3.write(SERVO3_DOWN);
     targets_hit++;
     return true;
   }
@@ -153,14 +169,16 @@ void loop() {
 
     radio.read(&message, sizeof(message));
     if (message == 1) {
-      sensor1 = analogRead(SENSOR1);
-      sensor2 = analogRead(SENSOR2);
-      sensor3 = analogRead(SENSOR3);
-      Serial.print(sensor1);
+      delay(30);
+      norm_sensor1 = analogRead(SENSOR1)+0.1;
+      norm_sensor2 = analogRead(SENSOR2)+0.1;
+      norm_sensor3 = analogRead(SENSOR3)+0.1;
+      Serial.println("DEFAULT VALUES");
+      Serial.print(norm_sensor1);
       Serial.print(" : ");
-      Serial.print(sensor2);
+      Serial.print(norm_sensor2);
       Serial.print(" : ");
-      Serial.println(sensor3);
+      Serial.println(norm_sensor3);
       delay(100);
       shots++;
       hit = 1;
