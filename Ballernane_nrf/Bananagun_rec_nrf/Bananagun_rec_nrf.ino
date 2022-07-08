@@ -10,6 +10,7 @@
     message == 2: Banana requests to reset
     message == 3: (upcoming) Banana will shoot
 */
+
 #include <Servo.h>
 #include <SPI.h>
 #include <LiquidCrystal_I2C.h>
@@ -96,6 +97,11 @@ void reset() {
 }
 
 bool targetRun() {
+  Serial.print(analogRead(SENSOR1));
+  Serial.print(" : ");
+  Serial.print(analogRead(SENSOR2));
+  Serial.print(" : ");
+  Serial.println(analogRead(SENSOR3));
   int temp_tar = targets_hit;
   if (SINGLE_TARGET) {
     if (analogRead(SENSOR1) > sensor1*1.4) {
@@ -105,7 +111,7 @@ bool targetRun() {
     }
     return;
   }
-  if (analogRead(SENSOR1) > sensor1*1.4) {
+  if (analogRead(SENSOR1) > sensor1*1.5) {
     servo1.write(50);
     targets_hit++;
     Serial.println("Hit");
@@ -114,12 +120,12 @@ bool targetRun() {
     Serial.print(sensor1);
     return true;
   }
-  else if (analogRead(SENSOR2) > sensor2*1.4) {
+  else if (analogRead(SENSOR2) > sensor2*1.5) {
     servo2.write(50);
     targets_hit++;
     return true;
   }
-  else if (analogRead(SENSOR3) > sensor3*1.4) {
+  else if (analogRead(SENSOR3) > sensor3*1.5) {
     servo3.write(50);
     targets_hit++;
     return true;
@@ -150,6 +156,11 @@ void loop() {
       sensor1 = analogRead(SENSOR1);
       sensor2 = analogRead(SENSOR2);
       sensor3 = analogRead(SENSOR3);
+      Serial.print(sensor1);
+      Serial.print(" : ");
+      Serial.print(sensor2);
+      Serial.print(" : ");
+      Serial.println(sensor3);
       delay(100);
       shots++;
       hit = 1;
