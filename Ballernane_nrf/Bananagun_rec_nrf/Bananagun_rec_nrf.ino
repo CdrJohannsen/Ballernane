@@ -82,9 +82,13 @@ void send_message(int message, String serial_message = "Sending...") {
 }
 
 void reset() {
-  servo1.write(145);
-  servo2.write(140);
-  servo3.write(140);
+  servo1.write(50);
+  servo2.write(50);
+  servo3.write(50);
+  delay(100);
+  servo1.write(120);
+  servo2.write(120);
+  servo3.write(120);
   targets_hit = 0;
   shots = 0;
   hit = 2;
@@ -94,14 +98,14 @@ void reset() {
 bool targetRun() {
   int temp_tar = targets_hit;
   if (SINGLE_TARGET) {
-    if (digitalRead(SENSOR1)) {
+    if (analogRead(SENSOR1) > sensor1*1.4) {
       servo2.write(40);
       targets_hit++;
       servo2.write(135);
     }
     return;
   }
-  if (analogRead(SENSOR1) > sensor1*1.2) {
+  if (analogRead(SENSOR1) > sensor1*1.4) {
     servo1.write(50);
     targets_hit++;
     Serial.println("Hit");
@@ -110,12 +114,12 @@ bool targetRun() {
     Serial.print(sensor1);
     return true;
   }
-  else if (analogRead(SENSOR2) > sensor2*1.2) {
+  else if (analogRead(SENSOR2) > sensor2*1.4) {
     servo2.write(50);
     targets_hit++;
     return true;
   }
-  else if (analogRead(SENSOR3) > sensor3*1.2) {
+  else if (analogRead(SENSOR3) > sensor3*1.4) {
     servo3.write(50);
     targets_hit++;
     return true;
