@@ -120,14 +120,14 @@ bool targetRun() {
   Serial.println(sensor3);
   int temp_tar = targets_hit;
   if (SINGLE_TARGET) {
-    if (sensor1 > norm_sensor1*2) {
+    if (sensor1 > norm_sensor1+2) {
       servo2.write(SERVO2_DOWN);
       targets_hit++;
       servo2.write(SERVO2_UP);
     }
     return;
   }
-  if (sensor1 > norm_sensor1*2) {
+  if (sensor1 > norm_sensor1+2) {
     servo1.write(SERVO1_DOWN);
     targets_hit++;
     Serial.println("Hit");
@@ -136,12 +136,12 @@ bool targetRun() {
     Serial.print(sensor1);
     return true;
   }
-  else if (sensor2 > norm_sensor2*2) {
+  else if (sensor2 > norm_sensor2+2) {
     servo2.write(SERVO2_DOWN);
     targets_hit++;
     return true;
   }
-  else if (sensor3 > norm_sensor3*2) {
+  else if (sensor3 > norm_sensor3+2) {
     servo3.write(SERVO3_DOWN);
     targets_hit++;
     return true;
@@ -169,10 +169,10 @@ void loop() {
 
     radio.read(&message, sizeof(message));
     if (message == 1) {
-      delay(30);
-      norm_sensor1 = analogRead(SENSOR1)+0.1;
-      norm_sensor2 = analogRead(SENSOR2)+0.1;
-      norm_sensor3 = analogRead(SENSOR3)+0.1;
+      delay(40);
+      norm_sensor1 = analogRead(SENSOR1);
+      norm_sensor2 = analogRead(SENSOR2);
+      norm_sensor3 = analogRead(SENSOR3);
       Serial.println("DEFAULT VALUES");
       Serial.print(norm_sensor1);
       Serial.print(" : ");
