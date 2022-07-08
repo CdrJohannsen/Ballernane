@@ -25,9 +25,9 @@
 #define SERVO2_DOWN 40
 #define SERVO3_DOWN 50
 
-#define SERVO1_UP 120
-#define SERVO2_UP 120
-#define SERVO3_UP 120
+#define SERVO1_UP 130
+#define SERVO2_UP 130
+#define SERVO3_UP 130
 
 
 uint8_t star[8]  = {0x0, 0x0, 0x15, 0xe, 0x1f, 0xe, 0x15, 0x0};
